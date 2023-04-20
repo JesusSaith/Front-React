@@ -1,14 +1,11 @@
-
-
 name: release CI, CD workflow 
-
 on: 
   push:
     branches: [ "release"]
   pull_request:
     branches: [ "release"]
 jobs:
-  release_ci_cd:
+  master:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +25,7 @@ jobs:
           file_name: .env
           fail_on_empty: false
           
-      - name: build angular, output in dist/openai
+      - name: build angular, output in dist/openia
         run: |
           npm run build
       
@@ -64,8 +61,8 @@ jobs:
         run: sed -i 's/{docker_user}/${{secrets.DOCKER_USER}}/g' manifests/k8s.yaml
 
       - name: update model name in k8 
-        run: sed -i 's/{model_name}/${{secrets.MODEL_NAME_TEST}}/g' manifests/k8s.yaml
-      - name: update model nodo in k8 
+        run: sed -i 's/{model_name}/${{secrets.MODEL_NAME}}/g' manifests/k8s.yaml
+
       - name: update _ by - 
         run: sed -i 's/_/-/g' manifests/k8s.yaml
 
@@ -86,11 +83,3 @@ jobs:
           namespace: ${{secrets.OKTETO_NAMESPACE }}
           manifest: manifests/k8s.yaml
           tag: ${{ secrets.DOCKER_USERNAME }}/${{secrets.MODEL_NAME_TEST}}:${{github.sha}}
-          
-          
-          
-          
-          
-#To-do list: Update data of accounts if it's neccesary
-          
-          
